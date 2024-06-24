@@ -1,5 +1,6 @@
 import 'package:expansion_panel_list/data/panel_item.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -10,13 +11,13 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   bool _isOuterExpanded = false;
+  int _currentlyExpandedPanelIndex = -1;
   final List<Item> _data = generateItems(5);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
           title: const Text('Expansion Panel List Demo'),
-          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         ),
         body: SingleChildScrollView(
           child: Container(
@@ -27,9 +28,13 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildOuterPanel() {
     return ExpansionPanelList(
+      expandedHeaderPadding: EdgeInsets.zero,
       expansionCallback: (int index, bool isExpanded) {
         setState(() {
           _isOuterExpanded = isExpanded;
+          if (!isExpanded) {
+            _currentlyExpandedPanelIndex = -1;
+          }
         });
       },
       children: [
@@ -54,12 +59,16 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildInnerPanel() {
     return ExpansionPanelList(
+      expandedHeaderPadding: EdgeInsets.zero,
+      materialGapSize:0,
       expansionCallback: (int index, bool isExpanded) {
         setState(() {
-          _data[index].isExpanded = isExpanded;
+          //_data[index].isExpanded = isExpanded;
+          _currentlyExpandedPanelIndex = isExpanded ? index : -1;
         });
       },
       children: _data.map<ExpansionPanel>((Item item) {
+        int itemIndex = _data.indexOf(item);
         return ExpansionPanel(
           headerBuilder: (BuildContext context, bool isExpanded) {
             return ListTile(
@@ -76,7 +85,7 @@ class _HomePageState extends State<HomePage> {
                   _data.removeWhere((Item currentItem) => item == currentItem);
                 });
               }),
-          isExpanded: item.isExpanded,
+          isExpanded: _currentlyExpandedPanelIndex == itemIndex,
         );
       }).toList(),
     );
