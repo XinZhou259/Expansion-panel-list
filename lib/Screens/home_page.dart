@@ -42,7 +42,7 @@ class _HomePageState extends State<HomePage> {
           headerBuilder: (BuildContext context, bool isExpanded) {
             return ListTile(
               title: Text(
-                'Parent Panel',
+                'Outer Panel',
                 style: TextStyle(
                   fontSize: 20.0, // Set the font size
                   fontWeight: FontWeight.bold, // Set the font weight
@@ -52,6 +52,7 @@ class _HomePageState extends State<HomePage> {
           },
           body: _isOuterExpanded ? _buildInnerPanel() : Container(),
           isExpanded: _isOuterExpanded,
+          canTapOnHeader: true,
         ),
       ],
     );
@@ -60,7 +61,7 @@ class _HomePageState extends State<HomePage> {
   Widget _buildInnerPanel() {
     return ExpansionPanelList(
       expandedHeaderPadding: EdgeInsets.zero,
-      materialGapSize:0,
+      materialGapSize: 0,
       expansionCallback: (int index, bool isExpanded) {
         setState(() {
           //_data[index].isExpanded = isExpanded;
@@ -86,6 +87,7 @@ class _HomePageState extends State<HomePage> {
                 });
               }),
           isExpanded: _currentlyExpandedPanelIndex == itemIndex,
+          canTapOnHeader: true,
         );
       }).toList(),
     );
