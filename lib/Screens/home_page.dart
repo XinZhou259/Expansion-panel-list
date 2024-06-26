@@ -10,8 +10,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  bool _isOuterExpanded = false;
-  int _currentlyExpandedPanelIndex = -1;
+  OuterItem _outerPanel = OuterItem(headerValue: "Outer Panel", innerItems: []);
+  int _currentlyExpandedInnerPanelIndex = -1;
   final List<Item> _data = generateItems(5);
   @override
   Widget build(BuildContext context) {
@@ -21,19 +21,19 @@ class _HomePageState extends State<HomePage> {
         ),
         body: SingleChildScrollView(
           child: Container(
-            child: _buildOuterPanel(),
+            child: _buildOuterPanel(_outerPanel),
           ),
         ));
   }
 
-  Widget _buildOuterPanel() {
+  Widget _buildOuterPanel(OuterItem outerItem) {
     return ExpansionPanelList(
       expandedHeaderPadding: EdgeInsets.zero,
       expansionCallback: (int index, bool isExpanded) {
         setState(() {
-          _isOuterExpanded = isExpanded;
+          outerItem.isExpanded = isExpanded;          
           if (!isExpanded) {
-            _currentlyExpandedPanelIndex = -1;
+            _currentlyExpandedInnerPanelIndex = -1;
           }
         });
       },
@@ -42,7 +42,7 @@ class _HomePageState extends State<HomePage> {
           headerBuilder: (BuildContext context, bool isExpanded) {
             return ListTile(
               title: Text(
-                'Outer Panel',
+                outerItem.headerValue,
                 style: TextStyle(
                   fontSize: 20.0, // Set the font size
                   fontWeight: FontWeight.bold, // Set the font weight
@@ -50,8 +50,8 @@ class _HomePageState extends State<HomePage> {
               ),
             );
           },
-          body: _isOuterExpanded ? _buildInnerPanel() : Container(),
-          isExpanded: _isOuterExpanded,
+          body: outerItem.isExpanded ? _buildInnerPanel() : Container(),
+          isExpanded: outerItem.isExpanded,
           canTapOnHeader: true,
         ),
       ],
@@ -65,7 +65,7 @@ class _HomePageState extends State<HomePage> {
       expansionCallback: (int index, bool isExpanded) {
         setState(() {
           //_data[index].isExpanded = isExpanded;
-          _currentlyExpandedPanelIndex = isExpanded ? index : -1;
+          _currentlyExpandedInnerPanelIndex = isExpanded ? index : -1;
         });
       },
       children: _data.map<ExpansionPanel>((Item item) {
@@ -86,7 +86,7 @@ class _HomePageState extends State<HomePage> {
                   _data.removeWhere((Item currentItem) => item == currentItem);
                 });
               }),
-          isExpanded: _currentlyExpandedPanelIndex == itemIndex,
+          isExpanded: _currentlyExpandedInnerPanelIndex == itemIndex,
           canTapOnHeader: true,
         );
       }).toList(),
